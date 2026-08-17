@@ -147,6 +147,15 @@ const DEFAULT_TRACKS = [
     "duration": 240,
     "cover": "https://i.ytimg.com/vi/RDZABOl2ZMw/hqdefault.jpg",
     "rawTitle": "Kabhi Bekasi Ne Maara - Lyrical Video | Alag Alag |  Kishore Kumar | R.D. Burman | Rajesh Khanna"
+  },
+  {
+    "id": "mImrXm_bbY4",
+    "title": "जनता दरबार",
+    "artist": "Saregama Hum Bhojpuri",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/mImrXm_bbY4/hqdefault.jpg",
+    "rawTitle": "#Video | जनता दरबार | Tuntun Yadav | Shilpi Raj | Khushi Yadav | Janta Darbar | नया भोजपुरी गाना"
   }
 ];
 
@@ -547,72 +556,49 @@ async function syncPlaylist(showIndicator = true) {
       } catch {}
     }
 
-    // 4. Live Client-Side YouTube Scrape using open CORS proxy
+    // 4. Live Direct YouTube API Sync via Invidious public CORS endpoints
     if (!newTracks || newTracks.length <= state.tracks.length) {
-      try {
-        const playlistUrl = 'https://www.youtube.com/playlist?list=PLYXILd9treh0';
-        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(playlistUrl);
-        const proxyRes = await fetch(proxyUrl);
-        if (proxyRes && proxyRes.ok) {
-          const html = await proxyRes.text();
-          const regex = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
-          const foundIds = [];
-          let match;
-          while ((match = regex.exec(html)) !== null) {
-            if (!foundIds.includes(match[1])) foundIds.push(match[1]);
-          }
+      const apiEndpoints = [
+        'https://inv.nadeko.net/api/v1/playlists/PLYXILd9treh0',
+        'https://invidious.nerdvpn.de/api/v1/playlists/PLYXILd9treh0',
+        'https://yt.drgnz.club/api/v1/playlists/PLYXILd9treh0',
+      ];
 
-          if (foundIds.length > 0) {
-            const existingMap = new Map(state.tracks.map((t) => [t.id, t]));
-            const resolvedTracks = await Promise.all(
-              foundIds.map(async (vid) => {
-                if (existingMap.has(vid)) return existingMap.get(vid);
-                try {
-                  const oeRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${vid}&format=json`);
-                  if (oeRes && oeRes.ok) {
-                    const oeData = await oeRes.json();
-                    let raw = oeData.title || `Track ${vid}`;
-                    let title = raw.replace(/\s*\(Official (Music )?(Video|Audio|Track|Visualizer)\)/gi, '')
-                                   .replace(/\s*\[Official (Music )?(Video|Audio|Track|Visualizer)\]/gi, '')
-                                   .replace(/\s*\[HD\]|\s*\(HD\)/gi, '')
-                                   .replace(/\s*\|.*$/, '').trim();
-                    let artist = oeData.author_name || 'EditorsAdda';
-                    if (title.includes(' - ')) {
-                      const parts = title.split(' - ');
-                      artist = parts[0].trim();
-                      title = parts.slice(1).join(' - ').trim();
-                    }
-                    return {
-                      id: vid,
-                      title: title || raw,
-                      artist: artist,
-                      album: 'EditorsAdda Playlist',
-                      duration: 240,
-                      cover: `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`,
-                      rawTitle: raw
-                    };
-                  }
-                } catch {}
+      for (const endpoint of apiEndpoints) {
+        if (newTracks && newTracks.length > state.tracks.length) break;
+        try {
+          const invRes = await fetch(endpoint);
+          if (invRes && invRes.ok) {
+            const invData = await invRes.json();
+            if (invData && Array.isArray(invData.videos) && invData.videos.length > 0) {
+              newTracks = invData.videos.map((v) => {
+                let raw = v.title || `Track ${v.videoId}`;
+                let title = raw.replace(/\s*#Video\s*\|\s*/gi, '')
+                               .replace(/\s*\(Official (Music )?(Video|Audio|Track|Visualizer)\)/gi, '')
+                               .replace(/\s*\[Official (Music )?(Video|Audio|Track|Visualizer)\]/gi, '')
+                               .replace(/\s*\[HD\]|\s*\(HD\)/gi, '')
+                               .replace(/\s*\|.*$/, '').trim();
+                let artist = v.author || 'EditorsAdda';
+                if (title.includes(' - ')) {
+                  const parts = title.split(' - ');
+                  artist = parts[0].trim();
+                  title = parts.slice(1).join(' - ').trim();
+                }
                 return {
-                  id: vid,
-                  title: `Track ${vid}`,
-                  artist: 'EditorsAdda',
+                  id: v.videoId,
+                  title: title || raw,
+                  artist: artist,
                   album: 'EditorsAdda Playlist',
-                  duration: 240,
-                  cover: `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`,
-                  rawTitle: `YouTube Track ${vid}`
+                  duration: v.lengthSeconds || 240,
+                  cover: `https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg`,
+                  rawTitle: raw
                 };
-              })
-            );
-
-            if (resolvedTracks.length > 0) {
-              newTracks = resolvedTracks;
+              });
               localStorage.setItem('ea-custom-tracks', JSON.stringify(newTracks));
+              break;
             }
           }
-        }
-      } catch (proxyErr) {
-        console.warn('Proxy scrape notice:', proxyErr);
+        } catch {}
       }
     }
 
@@ -681,15 +667,25 @@ if (el.next) el.next.addEventListener('click', () => go(state.pos + 1));
 
 if (el.shuffle) {
   el.shuffle.addEventListener('click', () => {
-    const keep = currentTrack();
-    state.shuffle = !state.shuffle;
-    el.shuffle.classList.toggle('is-on', state.shuffle);
-    el.shuffle.setAttribute('aria-pressed', String(state.shuffle));
+    state.shuffle = true;
+    el.shuffle.classList.add('is-on');
+    el.shuffle.setAttribute('aria-pressed', 'true');
 
     state.order = buildOrder();
-    state.pos = Math.max(0, state.order.indexOf(state.tracks.indexOf(keep)));
+    
+    // Pick a random track from the playlist
+    let randomPos = Math.floor(Math.random() * state.tracks.length);
+    if (state.tracks.length > 1 && randomPos === state.pos) {
+      randomPos = (randomPos + 1) % state.tracks.length;
+    }
+
+    go(randomPos);
     renderList(el.searchInput ? el.searchInput.value : '');
-    renderTrack();
+
+    const t = currentTrack();
+    if (t) {
+      showToast('🔀', `Shuffled: ${t.title}`, 2200);
+    }
   });
 }
 
