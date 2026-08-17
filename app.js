@@ -30,6 +30,123 @@ const DEFAULT_TRACKS = [
     "duration": 240,
     "cover": "https://i.ytimg.com/vi/bUk1YcCPfpQ/hqdefault.jpg",
     "rawTitle": "Dhanda Nyoliwala - Zigane (Official Music Video)"
+  },
+  {
+    "id": "69-yupf0pAY",
+    "title": "Knife Brows",
+    "artist": "Dhanda Nyoliwala",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/69-yupf0pAY/hqdefault.jpg",
+    "rawTitle": "Dhanda Nyoliwala - Knife Brows (Official Music Video)"
+  },
+  {
+    "id": "AxN0RjNx6WM",
+    "title": "Jaiye Sajana (From \"Dhurandhar The Revenge\")",
+    "artist": "Shashwat Sachdev - Topic",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/AxN0RjNx6WM/hqdefault.jpg",
+    "rawTitle": "Jaiye Sajana (From \"Dhurandhar The Revenge\")"
+  },
+  {
+    "id": "XcJVcyZ2vwE",
+    "title": "Hopeless Amanraj Gill",
+    "artist": "Nav Haryanvi",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/XcJVcyZ2vwE/hqdefault.jpg",
+    "rawTitle": "Hopeless (Official Video) Amanraj Gill | Prem Lata | New Haryanvi Song 2025"
+  },
+  {
+    "id": "A7Dk-ixHKjY",
+    "title": "Status Khasa Aala Chahar",
+    "artist": "Dollar Music",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/A7Dk-ixHKjY/hqdefault.jpg",
+    "rawTitle": "Status (Official Video) Khasa Aala Chahar | Anny Kathwar | New Haryanvi song 2025"
+  },
+  {
+    "id": "1OAjeECW90E",
+    "title": "Russian Bandana (Music Video)",
+    "artist": "VYRL Haryanvi",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/1OAjeECW90E/hqdefault.jpg",
+    "rawTitle": "Dhanda Nyoliwala - Russian Bandana (Music Video) | Deepesh Goyal | VYRL Haryanvi"
+  },
+  {
+    "id": "Z8IRRphKFZA",
+    "title": "COURTSIDE KARAN AUJLA",
+    "artist": "Karan Aujla",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/Z8IRRphKFZA/hqdefault.jpg",
+    "rawTitle": "COURTSIDE (OFFICIAL MUSIC VIDEO) KARAN AUJLA  | LATEST PUNJABI SONGS 2025"
+  },
+  {
+    "id": "n_VrRuNkbrE",
+    "title": "8K/4K Music Video",
+    "artist": "Sony Music India",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/n_VrRuNkbrE/hqdefault.jpg",
+    "rawTitle": "Toh Phir Aao - 8K/4K Music Video | Awarapan | Emraan Hashmi Song | Mustafa Zahid | Pritam"
+  },
+  {
+    "id": "1xuhxVo8v60",
+    "title": "Andaaz e Karam Madhur Sharma, Moin, ER, Roheb",
+    "artist": "UMusicIndiaVEVO",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/1xuhxVo8v60/hqdefault.jpg",
+    "rawTitle": "Andaaz e Karam (Official Video) Madhur Sharma, Moin, ER, Roheb | Unke Andaaz E Karam"
+  },
+  {
+    "id": "25qkuX8qzQo",
+    "title": "Nafrat Official Music Video",
+    "artist": "Indie Music Label",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/25qkuX8qzQo/hqdefault.jpg",
+    "rawTitle": "Nafrat Official Music Video | Darshan Raval | Sandipa D | Akshay K | Naushad Khan | Indie Music"
+  },
+  {
+    "id": "muds1gFUTN8",
+    "title": "Aam Jahe Munde",
+    "artist": "Parmish Verma",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/muds1gFUTN8/hqdefault.jpg",
+    "rawTitle": "Aam Jahe Munde | Parmish Verma feat Pardhaan | Desi Crew | Laddi Chahal"
+  },
+  {
+    "id": "HX1EXb5kWwY",
+    "title": "Ve Junoon",
+    "artist": "Sony Music India",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/HX1EXb5kWwY/hqdefault.jpg",
+    "rawTitle": "Ve Junoon | Awarapan 2 | Emraan Hashmi, Disha Patani | Vishesh Bhatt | Mithoon, Sayeed Q., Subodhh"
+  },
+  {
+    "id": "kWh6fgcreyw",
+    "title": "Do Numbari",
+    "artist": "Excel Movies",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/kWh6fgcreyw/hqdefault.jpg",
+    "rawTitle": "Dhanda Nyoliwala - Do Numbari (Official Video) | Mirzapur The Movie | In Cinemas 4 Sep 2026"
+  },
+  {
+    "id": "RDZABOl2ZMw",
+    "title": "Lyrical Video",
+    "artist": "T-Series Bollywood Classics",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/RDZABOl2ZMw/hqdefault.jpg",
+    "rawTitle": "Kabhi Bekasi Ne Maara - Lyrical Video | Alag Alag |  Kishore Kumar | R.D. Burman | Rajesh Khanna"
   }
 ];
 
@@ -404,20 +521,7 @@ async function syncPlaylist(showIndicator = true) {
       }
     } catch {}
 
-    // 2. Try regular local tracks endpoint
-    if (!newTracks) {
-      try {
-        const trackRes = await fetch('/api/tracks');
-        if (trackRes && trackRes.ok) {
-          const trackData = await trackRes.json();
-          if (Array.isArray(trackData) && trackData.length > 0) {
-            newTracks = trackData;
-          }
-        }
-      } catch {}
-    }
-
-    // 3. Try static tracks.json with cache-busting
+    // 2. Try static tracks.json with cache-busting
     if (!newTracks) {
       try {
         const staticRes = await fetch('tracks.json?v=' + Date.now());
@@ -430,7 +534,7 @@ async function syncPlaylist(showIndicator = true) {
       } catch {}
     }
 
-    // 4. Try raw GitHub repo backup (for live GitHub Pages instant updates)
+    // 3. Try raw GitHub repo backup (for live GitHub Pages instant updates)
     if (!newTracks) {
       try {
         const ghRes = await fetch('https://raw.githubusercontent.com/Kudoaditya/editorsadda/main/tracks.json?v=' + Date.now());
@@ -441,6 +545,75 @@ async function syncPlaylist(showIndicator = true) {
           }
         }
       } catch {}
+    }
+
+    // 4. Live Client-Side YouTube Scrape using open CORS proxy
+    if (!newTracks || newTracks.length <= state.tracks.length) {
+      try {
+        const playlistUrl = 'https://www.youtube.com/playlist?list=PLYXILd9treh0';
+        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(playlistUrl);
+        const proxyRes = await fetch(proxyUrl);
+        if (proxyRes && proxyRes.ok) {
+          const html = await proxyRes.text();
+          const regex = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
+          const foundIds = [];
+          let match;
+          while ((match = regex.exec(html)) !== null) {
+            if (!foundIds.includes(match[1])) foundIds.push(match[1]);
+          }
+
+          if (foundIds.length > 0) {
+            const existingMap = new Map(state.tracks.map((t) => [t.id, t]));
+            const resolvedTracks = await Promise.all(
+              foundIds.map(async (vid) => {
+                if (existingMap.has(vid)) return existingMap.get(vid);
+                try {
+                  const oeRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${vid}&format=json`);
+                  if (oeRes && oeRes.ok) {
+                    const oeData = await oeRes.json();
+                    let raw = oeData.title || `Track ${vid}`;
+                    let title = raw.replace(/\s*\(Official (Music )?(Video|Audio|Track|Visualizer)\)/gi, '')
+                                   .replace(/\s*\[Official (Music )?(Video|Audio|Track|Visualizer)\]/gi, '')
+                                   .replace(/\s*\[HD\]|\s*\(HD\)/gi, '')
+                                   .replace(/\s*\|.*$/, '').trim();
+                    let artist = oeData.author_name || 'EditorsAdda';
+                    if (title.includes(' - ')) {
+                      const parts = title.split(' - ');
+                      artist = parts[0].trim();
+                      title = parts.slice(1).join(' - ').trim();
+                    }
+                    return {
+                      id: vid,
+                      title: title || raw,
+                      artist: artist,
+                      album: 'EditorsAdda Playlist',
+                      duration: 240,
+                      cover: `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`,
+                      rawTitle: raw
+                    };
+                  }
+                } catch {}
+                return {
+                  id: vid,
+                  title: `Track ${vid}`,
+                  artist: 'EditorsAdda',
+                  album: 'EditorsAdda Playlist',
+                  duration: 240,
+                  cover: `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`,
+                  rawTitle: `YouTube Track ${vid}`
+                };
+              })
+            );
+
+            if (resolvedTracks.length > 0) {
+              newTracks = resolvedTracks;
+              localStorage.setItem('ea-custom-tracks', JSON.stringify(newTracks));
+            }
+          }
+        }
+      } catch (proxyErr) {
+        console.warn('Proxy scrape notice:', proxyErr);
+      }
     }
 
     if (Array.isArray(newTracks) && newTracks.length > 0) {
@@ -463,7 +636,7 @@ async function syncPlaylist(showIndicator = true) {
         renderTrack();
 
         if (showIndicator) {
-          showToast('✨', `Playlist updated (${newTracks.length} tracks)`, 3000);
+          showToast('✨', `Synced ${newTracks.length} tracks from YouTube!`, 3000);
         }
       } else {
         if (showIndicator) {
@@ -818,6 +991,16 @@ requestAnimationFrame(animateSpectrum);
 /* ── Initialization ─────────────────────────────────────────── */
 (async function init() {
   state.tracks = DEFAULT_TRACKS;
+
+  try {
+    const saved = localStorage.getItem('ea-custom-tracks');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        state.tracks = parsed;
+      }
+    }
+  } catch {}
 
   try {
     const res = await fetch('tracks.json?v=' + Date.now());
