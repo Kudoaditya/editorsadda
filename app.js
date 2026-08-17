@@ -65,6 +65,9 @@ const el = {
   shortcutsBtn: $('shortcutsBtn'),
   shortcutsModal: $('shortcutsModal'),
   closeModalBtn: $('closeModalBtn'),
+  toast: $('toast'),
+  toastIcon: $('toastIcon'),
+  toastMsg: $('toastMsg'),
 };
 
 const state = {
@@ -353,49 +356,120 @@ if (el.seek) {
   });
 }
 
+/* ── Toast Notification System ──────────────────────────────── */
+let toastTimer = null;
+function showToast(icon, msg, duration = 2800) {
+  if (!el.toast) return;
+  if (el.toastIcon) el.toastIcon.textContent = icon;
+  if (el.toastMsg) el.toastMsg.textContent = msg;
+
+  el.toast.classList.add('is-shown');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.toast.classList.remove('is-shown');
+  }, duration);
+}
+
 /* ── Auto-Sync Engine with YouTube Playlist ─────────────────── */
 async function syncPlaylist(showIndicator = true) {
-  if (showIndicator && el.syncBtn) el.syncBtn.classList.add('is-syncing');
+  if (showIndicator) {
+    if (el.syncBtn) el.syncBtn.classList.add('is-syncing');
+    showToast('⚡', 'Checking YouTube playlist…', 5000);
+  }
+
+  let newTracks = null;
 
   try {
-    let res = null;
+    // 1. Try local backend server sync trigger first (if running ruby server)
     try {
-      const apiRes = await fetch('/api/tracks');
-      if (apiRes && apiRes.ok) res = apiRes;
+      const syncRes = await fetch('/api/sync');
+      if (syncRes && syncRes.ok) {
+        const syncData = await syncRes.json();
+        if (syncData && Array.isArray(syncData.tracks) && syncData.tracks.length > 0) {
+          newTracks = syncData.tracks;
+        }
+      }
     } catch {}
 
-    if (!res || !res.ok) {
-      res = await fetch('tracks.json?v=' + Date.now());
+    // 2. Try regular local tracks endpoint
+    if (!newTracks) {
+      try {
+        const trackRes = await fetch('/api/tracks');
+        if (trackRes && trackRes.ok) {
+          const trackData = await trackRes.json();
+          if (Array.isArray(trackData) && trackData.length > 0) {
+            newTracks = trackData;
+          }
+        }
+      } catch {}
     }
 
-    if (res && res.ok) {
-      const newTracks = await res.json();
-      if (Array.isArray(newTracks) && newTracks.length > 0) {
-        const oldIds = state.tracks.map((t) => t.id).join(',');
-        const newIds = newTracks.map((t) => t.id).join(',');
-
-        if (oldIds !== newIds) {
-          const currentPlayingTrack = currentTrack();
-          state.tracks = newTracks;
-          state.order = buildOrder();
-
-          if (currentPlayingTrack) {
-            const newIdx = state.tracks.findIndex((t) => t.id === currentPlayingTrack.id);
-            if (newIdx !== -1) {
-              state.pos = Math.max(0, state.order.indexOf(newIdx));
-            }
+    // 3. Try static tracks.json with cache-busting
+    if (!newTracks) {
+      try {
+        const staticRes = await fetch('tracks.json?v=' + Date.now());
+        if (staticRes && staticRes.ok) {
+          const staticData = await staticRes.json();
+          if (Array.isArray(staticData) && staticData.length > 0) {
+            newTracks = staticData;
           }
-
-          renderList(el.searchInput ? el.searchInput.value : '');
-          renderTrack();
         }
+      } catch {}
+    }
+
+    // 4. Try raw GitHub repo backup (for live GitHub Pages instant updates)
+    if (!newTracks) {
+      try {
+        const ghRes = await fetch('https://raw.githubusercontent.com/Kudoaditya/editorsadda/main/tracks.json?v=' + Date.now());
+        if (ghRes && ghRes.ok) {
+          const ghData = await ghRes.json();
+          if (Array.isArray(ghData) && ghData.length > 0) {
+            newTracks = ghData;
+          }
+        }
+      } catch {}
+    }
+
+    if (Array.isArray(newTracks) && newTracks.length > 0) {
+      const oldIds = state.tracks.map((t) => t.id).join(',');
+      const newIds = newTracks.map((t) => t.id).join(',');
+
+      if (oldIds !== newIds) {
+        const currentPlayingTrack = currentTrack();
+        state.tracks = newTracks;
+        state.order = buildOrder();
+
+        if (currentPlayingTrack) {
+          const newIdx = state.tracks.findIndex((t) => t.id === currentPlayingTrack.id);
+          if (newIdx !== -1) {
+            state.pos = Math.max(0, state.order.indexOf(newIdx));
+          }
+        }
+
+        renderList(el.searchInput ? el.searchInput.value : '');
+        renderTrack();
+
+        if (showIndicator) {
+          showToast('✨', `Playlist updated (${newTracks.length} tracks)`, 3000);
+        }
+      } else {
+        if (showIndicator) {
+          showToast('✓', `Playlist is up to date (${newTracks.length} tracks)`, 2500);
+        }
+      }
+    } else {
+      if (showIndicator) {
+        showToast('✓', `Playlist active (${state.tracks.length} tracks)`, 2500);
       }
     }
   } catch (err) {
     console.warn('Sync notice:', err.message);
+    if (showIndicator) {
+      showToast('✓', `Playlist active (${state.tracks.length} tracks)`, 2500);
+    }
   } finally {
     if (showIndicator && el.syncBtn) {
-      setTimeout(() => el.syncBtn.classList.remove('is-syncing'), 600);
+      setTimeout(() => el.syncBtn.classList.remove('is-syncing'), 800);
     }
   }
 }
