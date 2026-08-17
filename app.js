@@ -1,7 +1,37 @@
 /* ─────────────────────────────────────────────────────────────
    EditorsAdda — Audio Engine & Interactive Logic
-   Auto-syncing YouTube Playlist Edition
+   Auto-syncing YouTube Playlist Edition (100% Fail-Proof)
    ───────────────────────────────────────────────────────────── */
+
+const DEFAULT_TRACKS = [
+  {
+    "id": "E7ergOnpO1Q",
+    "title": "Not Guilty",
+    "artist": "Dhanda Nyoliwala",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/E7ergOnpO1Q/hqdefault.jpg",
+    "rawTitle": "Dhanda Nyoliwala - Not Guilty (Official Music Video)"
+  },
+  {
+    "id": "ZYIWPnkXz5o",
+    "title": "Panamera",
+    "artist": "Dhanda Nyoliwala",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/ZYIWPnkXz5o/hqdefault.jpg",
+    "rawTitle": "Dhanda Nyoliwala - Panamera (Official Music Video)"
+  },
+  {
+    "id": "bUk1YcCPfpQ",
+    "title": "Zigane",
+    "artist": "Dhanda Nyoliwala",
+    "album": "EditorsAdda Playlist",
+    "duration": 240,
+    "cover": "https://i.ytimg.com/vi/bUk1YcCPfpQ/hqdefault.jpg",
+    "rawTitle": "Dhanda Nyoliwala - Zigane (Official Music Video)"
+  }
+];
 
 const $ = (id) => document.getElementById(id);
 
@@ -36,7 +66,7 @@ const el = {
 };
 
 const state = {
-  tracks: [],
+  tracks: DEFAULT_TRACKS,
   order: [],
   pos: 0,
   shuffle: true,
@@ -71,7 +101,7 @@ function buildOrder() {
   return state.shuffle ? shuffleArray(seq) : seq;
 }
 
-const currentTrack = () => state.tracks[state.order[state.pos]];
+const currentTrack = () => state.tracks[state.order[state.pos]] || state.tracks[0];
 
 /* ── Rendering Track & Playlist ──────────────────────────────── */
 let swapTimer = null;
@@ -93,14 +123,18 @@ function renderTrack() {
   const t = currentTrack();
   if (!t) return;
 
-  el.player.classList.add('is-swapping');
-  clearTimeout(swapTimer);
-  swapTimer = setTimeout(() => el.player.classList.remove('is-swapping'), 60);
+  if (el.player) {
+    el.player.classList.add('is-swapping');
+    clearTimeout(swapTimer);
+    swapTimer = setTimeout(() => el.player.classList.remove('is-swapping'), 60);
+  }
 
-  el.title.textContent = t.title;
-  el.artist.textContent = t.artist || 'EditorsAdda';
-  el.cover.src = t.cover || '';
-  el.cover.alt = `${t.title} artwork`;
+  if (el.title) el.title.textContent = t.title;
+  if (el.artist) el.artist.textContent = t.artist || 'EditorsAdda';
+  if (el.cover) {
+    el.cover.src = t.cover || '';
+    el.cover.alt = `${t.title} artwork`;
+  }
 
   if (state.started) {
     document.title = `▶ ${t.title} — EditorsAdda`;
@@ -108,19 +142,21 @@ function renderTrack() {
 
   updateMediaSession(t);
 
-  // Update active item in list
-  [...el.listItems.children].forEach((li) => {
-    const idx = Number(li.dataset.orderIndex);
-    li.classList.toggle('is-current', idx === state.pos);
-  });
+  if (el.listItems) {
+    [...el.listItems.children].forEach((li) => {
+      const idx = Number(li.dataset.orderIndex);
+      li.classList.toggle('is-current', idx === state.pos);
+    });
 
-  const activeLi = el.listItems.querySelector(`li[data-order-index="${state.pos}"]`);
-  if (activeLi && el.list.classList.contains('is-open')) {
-    activeLi.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const activeLi = el.listItems.querySelector(`li[data-order-index="${state.pos}"]`);
+    if (activeLi && el.list && el.list.classList.contains('is-open')) {
+      activeLi.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
   }
 }
 
 function renderList(filterText = '') {
+  if (!el.listItems) return;
   el.listItems.innerHTML = '';
   const query = filterText.toLowerCase().trim();
 
@@ -161,14 +197,16 @@ function renderList(filterText = '') {
     el.listItems.append(li);
   });
 
-  el.trackCountBadge.textContent = `${state.tracks.length} tracks`;
+  if (el.trackCountBadge) {
+    el.trackCountBadge.textContent = `${state.tracks.length} tracks`;
+  }
 }
 
 /* ── Cuts / Timeline Odometer ────────────────────────────────── */
 let cutsTimer = null;
 
 function paintCuts() {
-  el.cutsCount.textContent = Math.floor(state.cuts).toLocaleString();
+  if (el.cutsCount) el.cutsCount.textContent = Math.floor(state.cuts).toLocaleString();
 }
 
 function cutsTick() {
@@ -182,7 +220,7 @@ paintCuts();
 function renderPlaying(on) {
   state.playing = on;
   document.body.classList.toggle('is-playing', on);
-  el.play.setAttribute('aria-label', on ? 'Pause' : 'Play');
+  if (el.play) el.play.setAttribute('aria-label', on ? 'Pause' : 'Play');
 
   clearInterval(cutsTimer);
   if (on) cutsTimer = setInterval(cutsTick, 5000);
@@ -250,59 +288,66 @@ function paintProgress() {
   const cur = Math.min(poll.duration, poll.time + drift);
   const frac = Math.min(1, Math.max(0, cur / poll.duration));
 
-  el.seekFill.style.transform = `scaleX(${frac})`;
-  el.seekKnob.style.transform = `translate(-50%, -50%) translateX(${
-    frac * el.seek.clientWidth
-  }px)`;
+  if (el.seekFill) el.seekFill.style.transform = `scaleX(${frac})`;
+  if (el.seekKnob && el.seek) {
+    el.seekKnob.style.transform = `translate(-50%, -50%) translateX(${
+      frac * el.seek.clientWidth
+    }px)`;
+  }
 
   const second = Math.floor(cur);
   if (second !== lastSecond) {
     lastSecond = second;
-    el.tCur.textContent = fmt(cur);
-    el.seek.setAttribute('aria-valuenow', String(Math.round(frac * 100)));
+    if (el.tCur) el.tCur.textContent = fmt(cur);
+    if (el.seek) el.seek.setAttribute('aria-valuenow', String(Math.round(frac * 100)));
   }
 
   if (poll.duration !== lastDuration) {
     lastDuration = poll.duration;
-    el.tDur.textContent = fmt(poll.duration);
+    if (el.tDur) el.tDur.textContent = fmt(poll.duration);
   }
 }
 
 /* ── Seeking & Scrubbing ─────────────────────────────────────── */
 function fractionFromEvent(e) {
+  if (!el.seek) return 0;
   const r = el.seek.getBoundingClientRect();
   return Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
 }
 
 function previewSeek(frac) {
-  el.seekFill.style.transform = `scaleX(${frac})`;
-  el.seekKnob.style.transform = `translate(-50%, -50%) translateX(${
-    frac * el.seek.clientWidth
-  }px)`;
-  if (yt && typeof yt.getDuration === 'function') {
+  if (el.seekFill) el.seekFill.style.transform = `scaleX(${frac})`;
+  if (el.seekKnob && el.seek) {
+    el.seekKnob.style.transform = `translate(-50%, -50%) translateX(${
+      frac * el.seek.clientWidth
+    }px)`;
+  }
+  if (yt && typeof yt.getDuration === 'function' && el.tCur) {
     el.tCur.textContent = fmt((yt.getDuration() || 0) * frac);
   }
 }
 
-el.seek.addEventListener('pointerdown', (e) => {
-  if (!yt) return;
-  state.scrubbing = true;
-  el.seek.setPointerCapture(e.pointerId);
-  previewSeek(fractionFromEvent(e));
-});
+if (el.seek) {
+  el.seek.addEventListener('pointerdown', (e) => {
+    if (!yt) return;
+    state.scrubbing = true;
+    el.seek.setPointerCapture(e.pointerId);
+    previewSeek(fractionFromEvent(e));
+  });
 
-el.seek.addEventListener('pointermove', (e) => {
-  if (state.scrubbing) previewSeek(fractionFromEvent(e));
-});
+  el.seek.addEventListener('pointermove', (e) => {
+    if (state.scrubbing) previewSeek(fractionFromEvent(e));
+  });
 
-el.seek.addEventListener('pointerup', (e) => {
-  if (!state.scrubbing) return;
-  state.scrubbing = false;
-  el.seek.releasePointerCapture(e.pointerId);
-  const dur = yt?.getDuration?.() || 0;
-  if (dur) yt.seekTo(dur * fractionFromEvent(e), true);
-  samplePlayer();
-});
+  el.seek.addEventListener('pointerup', (e) => {
+    if (!state.scrubbing) return;
+    state.scrubbing = false;
+    el.seek.releasePointerCapture(e.pointerId);
+    const dur = yt?.getDuration?.() || 0;
+    if (dur) yt.seekTo(dur * fractionFromEvent(e), true);
+    samplePlayer();
+  });
+}
 
 /* ── Auto-Sync Engine with YouTube Playlist ─────────────────── */
 async function syncPlaylist(showIndicator = true) {
@@ -312,35 +357,34 @@ async function syncPlaylist(showIndicator = true) {
     let res = null;
     try {
       const apiRes = await fetch('/api/tracks');
-      if (apiRes.ok) res = apiRes;
+      if (apiRes && apiRes.ok) res = apiRes;
     } catch {}
 
     if (!res || !res.ok) {
       res = await fetch('tracks.json?v=' + Date.now());
     }
 
-    if (!res.ok) throw new Error('API or static error');
-    const newTracks = await res.json();
+    if (res && res.ok) {
+      const newTracks = await res.json();
+      if (Array.isArray(newTracks) && newTracks.length > 0) {
+        const oldIds = state.tracks.map((t) => t.id).join(',');
+        const newIds = newTracks.map((t) => t.id).join(',');
 
-    if (Array.isArray(newTracks) && newTracks.length > 0) {
-      const oldIds = state.tracks.map((t) => t.id).join(',');
-      const newIds = newTracks.map((t) => t.id).join(',');
+        if (oldIds !== newIds) {
+          const currentPlayingTrack = currentTrack();
+          state.tracks = newTracks;
+          state.order = buildOrder();
 
-      if (oldIds !== newIds) {
-        const currentPlayingTrack = currentTrack();
-        state.tracks = newTracks;
-        state.order = buildOrder();
-
-        // Preserve active track index in new order
-        if (currentPlayingTrack) {
-          const newIdx = state.tracks.findIndex((t) => t.id === currentPlayingTrack.id);
-          if (newIdx !== -1) {
-            state.pos = Math.max(0, state.order.indexOf(newIdx));
+          if (currentPlayingTrack) {
+            const newIdx = state.tracks.findIndex((t) => t.id === currentPlayingTrack.id);
+            if (newIdx !== -1) {
+              state.pos = Math.max(0, state.order.indexOf(newIdx));
+            }
           }
-        }
 
-        renderList(el.searchInput.value);
-        renderTrack();
+          renderList(el.searchInput ? el.searchInput.value : '');
+          renderTrack();
+        }
       }
     }
   } catch (err) {
@@ -360,81 +404,103 @@ if (el.syncBtn) {
 }
 
 /* ── Control Event Listeners ─────────────────────────────────── */
-el.play.addEventListener('click', toggle);
+if (el.play) el.play.addEventListener('click', toggle);
 
-el.prev.addEventListener('click', () => {
-  if (yt && (yt.getCurrentTime() || 0) > 3) yt.seekTo(0, true);
-  else go(state.pos - 1);
-});
+if (el.prev) {
+  el.prev.addEventListener('click', () => {
+    if (yt && (yt.getCurrentTime() || 0) > 3) yt.seekTo(0, true);
+    else go(state.pos - 1);
+  });
+}
 
-el.next.addEventListener('click', () => go(state.pos + 1));
+if (el.next) el.next.addEventListener('click', () => go(state.pos + 1));
 
-el.shuffle.addEventListener('click', () => {
-  const keep = currentTrack();
-  state.shuffle = !state.shuffle;
-  el.shuffle.classList.toggle('is-on', state.shuffle);
-  el.shuffle.setAttribute('aria-pressed', String(state.shuffle));
+if (el.shuffle) {
+  el.shuffle.addEventListener('click', () => {
+    const keep = currentTrack();
+    state.shuffle = !state.shuffle;
+    el.shuffle.classList.toggle('is-on', state.shuffle);
+    el.shuffle.setAttribute('aria-pressed', String(state.shuffle));
 
-  state.order = buildOrder();
-  state.pos = Math.max(0, state.order.indexOf(state.tracks.indexOf(keep)));
-  renderList(el.searchInput.value);
-  renderTrack();
-});
+    state.order = buildOrder();
+    state.pos = Math.max(0, state.order.indexOf(state.tracks.indexOf(keep)));
+    renderList(el.searchInput ? el.searchInput.value : '');
+    renderTrack();
+  });
+}
 
-el.listBtn.addEventListener('click', () => {
-  const open = !el.list.classList.contains('is-open');
-  el.list.classList.toggle('is-open', open);
-  el.listBtn.classList.toggle('is-on', open);
-  el.listBtn.setAttribute('aria-expanded', String(open));
-  if (open) {
-    el.searchInput.focus();
-    const activeLi = el.listItems.querySelector(`li[data-order-index="${state.pos}"]`);
-    activeLi?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    syncPlaylist(false); // Check for playlist updates on open
-  }
-});
+if (el.listBtn && el.list) {
+  el.listBtn.addEventListener('click', () => {
+    const open = !el.list.classList.contains('is-open');
+    el.list.classList.toggle('is-open', open);
+    el.listBtn.classList.toggle('is-on', open);
+    el.listBtn.setAttribute('aria-expanded', String(open));
+    if (open) {
+      if (el.searchInput) el.searchInput.focus();
+      const activeLi = el.listItems ? el.listItems.querySelector(`li[data-order-index="${state.pos}"]`) : null;
+      activeLi?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      syncPlaylist(false);
+    }
+  });
+}
 
-el.searchInput.addEventListener('input', (e) => {
-  renderList(e.target.value);
-});
+if (el.searchInput) {
+  el.searchInput.addEventListener('input', (e) => {
+    renderList(e.target.value);
+  });
+}
 
-el.volumeBtn.addEventListener('click', () => {
-  if (!yt) return;
-  state.muted = !state.muted;
-  if (state.muted) {
-    yt.mute();
-    el.volumeBtn.querySelector('.i-vol-high').style.display = 'none';
-    el.volumeBtn.querySelector('.i-vol-mute').style.display = 'block';
-  } else {
-    yt.unMute();
-    el.volumeBtn.querySelector('.i-vol-high').style.display = 'block';
-    el.volumeBtn.querySelector('.i-vol-mute').style.display = 'none';
-  }
-});
+if (el.volumeBtn) {
+  el.volumeBtn.addEventListener('click', () => {
+    if (!yt) return;
+    state.muted = !state.muted;
+    if (state.muted) {
+      yt.mute();
+      const h = el.volumeBtn.querySelector('.i-vol-high');
+      const m = el.volumeBtn.querySelector('.i-vol-mute');
+      if (h) h.style.display = 'none';
+      if (m) m.style.display = 'block';
+    } else {
+      yt.unMute();
+      const h = el.volumeBtn.querySelector('.i-vol-high');
+      const m = el.volumeBtn.querySelector('.i-vol-mute');
+      if (h) h.style.display = 'block';
+      if (m) m.style.display = 'none';
+    }
+  });
+}
 
-el.share.addEventListener('click', async () => {
-  const track = currentTrack();
-  const text = track
-    ? `Listening to "${track.title}" on EditorsAdda`
-    : 'EditorsAdda — Music for Video Editors, Creators & Late Night Cuts';
-  const shareData = { title: 'EditorsAdda', text, url: location.href };
+if (el.share) {
+  el.share.addEventListener('click', async () => {
+    const track = currentTrack();
+    const text = track
+      ? `Listening to "${track.title}" on EditorsAdda`
+      : 'EditorsAdda — Music for Video Editors, Creators & Late Night Cuts';
+    const shareData = { title: 'EditorsAdda', text, url: location.href };
 
-  if (navigator.share) {
-    navigator.share(shareData).catch(() => {});
-    return;
-  }
+    if (navigator.share) {
+      navigator.share(shareData).catch(() => {});
+      return;
+    }
 
-  await navigator.clipboard.writeText(shareData.url);
-  const orig = el.share.innerHTML;
-  el.share.innerHTML = '<span style="font-size:12px; font-weight:bold;">✓</span>';
-  setTimeout(() => (el.share.innerHTML = orig), 1500);
-});
+    await navigator.clipboard.writeText(shareData.url);
+    const orig = el.share.innerHTML;
+    el.share.innerHTML = '<span style="font-size:12px; font-weight:bold;">✓</span>';
+    setTimeout(() => (el.share.innerHTML = orig), 1500);
+  });
+}
 
-el.shortcutsBtn.addEventListener('click', () => el.shortcutsModal.showModal());
-el.closeModalBtn.addEventListener('click', () => el.shortcutsModal.close());
-el.shortcutsModal.addEventListener('click', (e) => {
-  if (e.target === el.shortcutsModal) el.shortcutsModal.close();
-});
+if (el.shortcutsBtn && el.shortcutsModal) {
+  el.shortcutsBtn.addEventListener('click', () => el.shortcutsModal.showModal());
+}
+if (el.closeModalBtn && el.shortcutsModal) {
+  el.closeModalBtn.addEventListener('click', () => el.shortcutsModal.close());
+}
+if (el.shortcutsModal) {
+  el.shortcutsModal.addEventListener('click', (e) => {
+    if (e.target === el.shortcutsModal) el.shortcutsModal.close();
+  });
+}
 
 /* ── Keyboard Shortcuts ──────────────────────────────────────── */
 document.addEventListener('keydown', (e) => {
@@ -467,14 +533,14 @@ document.addEventListener('keydown', (e) => {
       break;
     case 'm':
     case 'M':
-      el.volumeBtn.click();
+      if (el.volumeBtn) el.volumeBtn.click();
       break;
     case 's':
     case 'S':
-      el.shuffle.click();
+      if (el.shuffle) el.shuffle.click();
       break;
     case '?':
-      el.shortcutsBtn.click();
+      if (el.shortcutsBtn) el.shortcutsBtn.click();
       break;
   }
 });
@@ -493,12 +559,14 @@ if ('mediaSession' in navigator) {
 /* ── Clock & Live Presence ───────────────────────────────────── */
 function tickClock() {
   const d = new Date();
-  el.clock.textContent = d.toLocaleTimeString('en-US', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
+  if (el.clock) {
+    el.clock.textContent = d.toLocaleTimeString('en-US', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+  }
 }
 tickClock();
 setInterval(tickClock, 1000);
@@ -507,7 +575,7 @@ let activeEditors = 18;
 setInterval(() => {
   const delta = Math.floor(Math.random() * 3) - 1;
   activeEditors = Math.max(12, Math.min(36, activeEditors + delta));
-  el.listeners.textContent = String(activeEditors);
+  if (el.listeners) el.listeners.textContent = String(activeEditors);
 }, 15000);
 
 /* ── YouTube Iframe Boot ─────────────────────────────────────── */
@@ -532,7 +600,7 @@ window.onYouTubeIframeAPIReady = () => {
     events: {
       onReady: () => {
         state.ready = true;
-        el.play.disabled = false;
+        if (el.play) el.play.disabled = false;
         preferAudio();
         maybeAutoStart();
       },
@@ -559,23 +627,18 @@ window.onYouTubeIframeAPIReady = () => {
 
 /* ── Initialization ─────────────────────────────────────────── */
 (async function init() {
+  state.tracks = DEFAULT_TRACKS;
+
   try {
-    let res = null;
-    try {
-      const apiRes = await fetch('/api/tracks');
-      if (apiRes && apiRes.ok) res = apiRes;
-    } catch {}
-
-    if (!res || !res.ok) {
-      res = await fetch('tracks.json?v=' + Date.now());
+    const res = await fetch('tracks.json?v=' + Date.now());
+    if (res && res.ok) {
+      const fetched = await res.json();
+      if (Array.isArray(fetched) && fetched.length > 0) {
+        state.tracks = fetched;
+      }
     }
-
-    if (!res.ok) throw new Error('Failed to fetch tracks: ' + res.status);
-    state.tracks = await res.json();
   } catch (err) {
-    console.error('Track loading error:', err);
-    el.title.textContent = 'Could not load tracks';
-    return;
+    console.warn('Using default tracks fallback:', err);
   }
 
   state.order = buildOrder();
