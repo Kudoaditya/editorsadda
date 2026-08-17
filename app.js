@@ -58,7 +58,9 @@ const el = {
   clock: $('clock'),
   cutsCount: $('cutsCount'),
   listeners: $('listeners'),
+  volumeGroup: $('volumeGroup'),
   volumeBtn: $('volumeBtn'),
+  volumeSlider: $('volumeSlider'),
   share: $('share'),
   shortcutsBtn: $('shortcutsBtn'),
   shortcutsModal: $('shortcutsModal'),
@@ -75,6 +77,8 @@ const state = {
   started: false,
   scrubbing: false,
   muted: false,
+  volume: Number(localStorage.getItem('ea-volume')) || 100,
+  lastVolume: Number(localStorage.getItem('ea-volume')) || 100,
   cuts: Number(localStorage.getItem('ea-cuts')) || 0,
 };
 
@@ -450,22 +454,58 @@ if (el.searchInput) {
   });
 }
 
-if (el.volumeBtn) {
-  el.volumeBtn.addEventListener('click', () => {
-    if (!yt) return;
-    state.muted = !state.muted;
-    if (state.muted) {
+/* ── Volume Control Logic & Slider ───────────────────────────── */
+function updateVolumeIcons(val) {
+  if (!el.volumeBtn) return;
+  const h = el.volumeBtn.querySelector('.i-vol-high');
+  const l = el.volumeBtn.querySelector('.i-vol-low');
+  const m = el.volumeBtn.querySelector('.i-vol-mute');
+
+  if (h) h.style.display = val >= 50 ? 'block' : 'none';
+  if (l) l.style.display = (val > 0 && val < 50) ? 'block' : 'none';
+  if (m) m.style.display = val === 0 ? 'block' : 'none';
+}
+
+function setVolume(val, updateInput = true) {
+  val = Math.max(0, Math.min(100, Math.round(val)));
+  state.volume = val;
+  state.muted = (val === 0);
+  localStorage.setItem('ea-volume', String(val));
+
+  if (val > 0) state.lastVolume = val;
+
+  if (el.volumeSlider && updateInput) {
+    el.volumeSlider.value = String(val);
+  }
+
+  if (yt && typeof yt.setVolume === 'function') {
+    if (val === 0) {
       yt.mute();
-      const h = el.volumeBtn.querySelector('.i-vol-high');
-      const m = el.volumeBtn.querySelector('.i-vol-mute');
-      if (h) h.style.display = 'none';
-      if (m) m.style.display = 'block';
     } else {
       yt.unMute();
-      const h = el.volumeBtn.querySelector('.i-vol-high');
-      const m = el.volumeBtn.querySelector('.i-vol-mute');
-      if (h) h.style.display = 'block';
-      if (m) m.style.display = 'none';
+      yt.setVolume(val);
+    }
+  }
+
+  updateVolumeIcons(val);
+}
+
+if (el.volumeSlider) {
+  el.volumeSlider.value = String(state.volume);
+  updateVolumeIcons(state.volume);
+
+  el.volumeSlider.addEventListener('input', (e) => {
+    setVolume(Number(e.target.value), false);
+  });
+}
+
+if (el.volumeBtn) {
+  el.volumeBtn.addEventListener('click', () => {
+    if (state.volume > 0) {
+      state.lastVolume = state.volume;
+      setVolume(0);
+    } else {
+      setVolume(state.lastVolume || 80);
     }
   });
 }
@@ -530,6 +570,14 @@ document.addEventListener('keydown', (e) => {
       if (e.target !== el.searchInput) {
         if (yt) yt.seekTo(Math.min(yt.getDuration() || 0, (yt.getCurrentTime() || 0) + 5), true);
       }
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      setVolume(state.volume + 5);
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      setVolume(state.volume - 5);
       break;
     case 'm':
     case 'M':
@@ -601,6 +649,10 @@ window.onYouTubeIframeAPIReady = () => {
       onReady: () => {
         state.ready = true;
         if (el.play) el.play.disabled = false;
+        try {
+          yt.setVolume(state.volume);
+          if (state.muted) yt.mute();
+        } catch {}
         preferAudio();
         maybeAutoStart();
       },
@@ -624,6 +676,40 @@ window.onYouTubeIframeAPIReady = () => {
   setInterval(samplePlayer, 250);
   requestAnimationFrame(paintProgress);
 };
+
+/* ── Interactive 3D Mouse Parallax & Dynamic Equalizer ───────── */
+const bgImg = $('bgImg');
+const dock = $('dock');
+const spectrumBars = document.querySelectorAll('.spectrum-bar');
+
+window.addEventListener('mousemove', (e) => {
+  const normX = (e.clientX / window.innerWidth - 0.5) * 2;
+  const normY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+  if (bgImg) {
+    bgImg.style.transform = `scale(1.05) translate(${normX * -12}px, ${normY * -12}px)`;
+  }
+
+  if (dock && window.innerWidth > 768) {
+    dock.style.transform = `perspective(1000px) rotateX(${normY * -3.5}deg) rotateY(${normX * 4.5}deg)`;
+  }
+});
+
+// Dynamic Multi-Frequency Soundwave Waveform Generator
+let wavePhase = 0;
+function animateSpectrum() {
+  requestAnimationFrame(animateSpectrum);
+  if (!state.playing || !spectrumBars.length) return;
+
+  wavePhase += 0.08;
+  spectrumBars.forEach((bar, i) => {
+    const wave = Math.sin(wavePhase + i * 0.45) * 0.5 + 0.5;
+    const wave2 = Math.cos(wavePhase * 1.6 + i * 0.25) * 0.5 + 0.5;
+    const height = 6 + Math.floor((wave * 0.6 + wave2 * 0.4) * 30);
+    bar.style.height = `${height}px`;
+  });
+}
+requestAnimationFrame(animateSpectrum);
 
 /* ── Initialization ─────────────────────────────────────────── */
 (async function init() {
