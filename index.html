@@ -19,7 +19,7 @@
       property="og:description"
       content="Non-stop curated focus beats, lofi, and bangers for video editors and creators. Zero ads, zero friction."
     />
-    <meta property="og:image" content="/assets/bg.jpg" />
+    <meta property="og:image" content="assets/bg.jpg" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -45,7 +45,7 @@
           {
             "@type": "MusicPlaylist",
             "name": "EditorsAdda Timeline Cuts",
-            "numTracks": 10
+            "numTracks": 3
           }
         ]
       }
@@ -98,132 +98,145 @@
 
         <div class="clock" id="clock" aria-label="Local Timecode">00:00:00</div>
 
-        <button id="shortcutsBtn" class="topbar__btn" aria-label="Keyboard Shortcuts" title="Keyboard Shortcuts (?)">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/>
+        <button
+          type="button"
+          class="topbar__btn"
+          id="shortcutsBtn"
+          title="Keyboard shortcuts (?)"
+          aria-label="Keyboard Shortcuts"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+            <path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M18 12h.001M6 16h12"></path>
           </svg>
         </button>
       </div>
     </header>
 
-    <!-- Visual Audio Spectrum Equalizer -->
-    <div class="ambient-spectrum" id="spectrum" aria-hidden="true">
-      <span class="spectrum-bar"></span>
-      <span class="spectrum-bar"></span>
-      <span class="spectrum-bar"></span>
-      <span class="spectrum-bar"></span>
-      <span class="spectrum-bar"></span>
-      <span class="spectrum-bar"></span>
-      <span class="spectrum-bar"></span>
+    <!-- Spectrum Bars Visualizer -->
+    <div class="ambient-spectrum" aria-hidden="true">
+      <div class="spectrum-bar"></div>
+      <div class="spectrum-bar"></div>
+      <div class="spectrum-bar"></div>
+      <div class="spectrum-bar"></div>
+      <div class="spectrum-bar"></div>
+      <div class="spectrum-bar"></div>
+      <div class="spectrum-bar"></div>
     </div>
 
-    <!-- Main Hero Stage with Funky Branding & Player -->
+    <!-- Main Content Area -->
     <main>
-      <!-- Funky Bold Home Title Section -->
+      <!-- Funky Bold Retro Hero Section -->
       <section class="hero-brand" aria-label="EditorsAdda Headline">
         <div class="funky-tag">
-          <span class="funky-tag__dot">✦</span>
-          <span>THE CREATIVE TIMELINE LOUNGE</span>
-          <span class="funky-tag__dot">✦</span>
+          <span class="funky-tag__dot">⚡</span>
+          <span>CURATED EDIT BAY RADIO</span>
         </div>
-        
         <h1 class="funky-heading">
-          <span class="funky-word funky-word--editors" data-text="EDITORS">EDITORS</span>
-          <span class="funky-word funky-word--adda" data-text="ADDA">ADDA</span>
+          <span class="funky-word funky-word--editors">EDITORS</span>
+          <span class="funky-word funky-word--adda">ADDA</span>
         </h1>
-
         <p class="funky-subline">NON-STOP RETRO BANGERS • LO-FI CUTS • TIMELINE FOCUS</p>
       </section>
 
       <div class="dock">
-        <!-- Playlist Slide-up Drawer -->
-        <section class="list" id="list" aria-label="Playlist">
-          <div class="list__header">
-            <div class="list__title">
-              <span>Timeline Playlist</span>
-              <div class="list__header-actions">
-                <span class="list__badge" id="trackCountBadge">0 tracks</span>
-                <button id="syncBtn" class="list__sync-btn" title="Sync latest songs from YouTube playlist" aria-label="Sync playlist">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <div class="list__search-wrapper">
-              <input
-                type="text"
-                id="searchInput"
-                class="list__search"
-                placeholder="Search tracks or artists…"
-                aria-label="Search playlist"
-              />
-            </div>
-          </div>
-          <ol id="listItems"></ol>
-          <div class="list__footer">
-            <span>EditorsAdda • Import your YouTube playlist anytime</span>
-          </div>
-        </section>
-
-        <!-- Secondary Controls Pill (Shuffle, Playlist, Share, Volume) -->
+        <!-- Secondary Controls Pill -->
         <div class="controls-secondary">
-          <button id="shuffle" type="button" class="btn btn--small btn--toggle is-on" aria-label="Shuffle" aria-pressed="true" title="Shuffle (S)">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M17 3l4 4-4 4V8h-2.2l-2.3 3.1 2.3 3.1H17V11l4 4-4 4v-3h-3.2l-2.6-3.5L8.6 15H3v-2h4.6l2.6-3.5L12.8 6H17V3zM3 9h3.4l1.5 2H3V9z"/>
-            </svg>
-          </button>
-          
-          <button id="listBtn" type="button" class="btn btn--small btn--toggle" aria-label="Open Playlist" aria-expanded="false" aria-controls="list" title="Playlist (L)">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M3 6h13v2H3zm0 5h13v2H3zm0 5h9v2H3zm15-6.5l4 3-4 3z" />
-            </svg>
-          </button>
-
-          <button id="volumeBtn" type="button" class="btn btn--small" aria-label="Mute / Unmute" title="Mute/Unmute (M)">
-            <svg class="i-vol-high" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-            </svg>
-            <svg class="i-vol-mute" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:none;">
-              <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+          <button
+            type="button"
+            class="btn btn--small btn--toggle is-on"
+            id="shuffle"
+            aria-label="Toggle Shuffle"
+            aria-pressed="true"
+            title="Shuffle (S)"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"></polyline>
+              <line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <line x1="4" y1="4" x2="9" y2="9"></line>
             </svg>
           </button>
 
-          <button id="share" type="button" class="btn btn--small" aria-label="Share EditorsAdda" title="Share">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M18 16.08a2.9 2.9 0 00-1.94.75l-7.03-4.1a3 3 0 000-1.46l7.03-4.1a2.92 2.92 0 10-.9-2.1v.25l-7.03 4.1a2.92 2.92 0 100 3.36l7.03 4.11a2.92 2.92 0 10.84-2.16z" />
+          <button
+            type="button"
+            class="btn btn--small btn--toggle"
+            id="listBtn"
+            aria-label="Toggle Playlist Drawer"
+            aria-expanded="false"
+            title="Playlist Drawer (L)"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn--small"
+            id="volumeBtn"
+            aria-label="Mute / Unmute"
+            title="Mute (M)"
+          >
+            <svg class="i-vol-high" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <svg class="i-vol-mute" style="display:none;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn--small"
+            id="share"
+            aria-label="Share current song"
+            title="Share Current Song"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
             </svg>
           </button>
         </div>
 
-        <!-- Main Glassmorphic Player -->
+        <!-- Main Glassmorphic Music Player -->
         <section class="player" id="player" aria-label="Music Player">
-          <!-- Vinyl / Tape Disc Art -->
-          <div class="disc" id="disc">
+          <!-- Spinning Vinyl Disc with Grooves & Artwork -->
+          <div class="disc" aria-hidden="true">
             <div class="disc__grooves"></div>
             <div class="disc__center">
-              <img id="cover" class="disc__art" alt="Album art" src="" />
+              <img class="disc__art" id="cover" src="" alt="Album Artwork" />
             </div>
             <div class="disc__spindle"></div>
           </div>
 
-          <!-- Metadata & Seeker -->
+          <!-- Metadata & Seeker Slider -->
           <div class="meta">
             <div class="meta__text-group">
-              <p class="meta__title" id="title">Loading timeline…</p>
-              <p class="meta__artist" id="artist">&nbsp;</p>
+              <h2 class="meta__title" id="title">Loading timeline…</h2>
+              <p class="meta__artist" id="artist">EditorsAdda</p>
             </div>
 
-            <!-- Seeker Slider -->
             <div
               class="seek"
               id="seek"
               role="slider"
-              tabindex="0"
-              aria-label="Timeline Seeker"
+              aria-label="Timeline Scrubber"
               aria-valuemin="0"
               aria-valuemax="100"
               aria-valuenow="0"
+              tabindex="0"
             >
               <div class="seek__rail">
                 <div class="seek__fill" id="seekFill"></div>
@@ -231,60 +244,138 @@
               <div class="seek__knob" id="seekKnob"></div>
             </div>
 
-            <div class="time">
+            <div class="time" aria-live="off">
               <span id="tCur">00:00</span>
               <span class="time__sep">/</span>
               <span id="tDur">00:00</span>
             </div>
           </div>
 
-          <!-- Main Transport Controls -->
+          <!-- Primary Controls: Previous, Play/Pause, Next -->
           <div class="controls">
-            <button id="prev" type="button" class="btn" aria-label="Previous Track" title="Previous (P or Left Arrow)">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+            <button
+              type="button"
+              class="btn"
+              id="prev"
+              aria-label="Previous Track"
+              title="Previous Track (P or J)"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
               </svg>
             </button>
 
-            <button id="play" type="button" class="btn btn--play" aria-label="Play" title="Play/Pause (Space)" disabled>
-              <svg class="i-play" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
+            <button
+              type="button"
+              class="btn btn--play"
+              id="play"
+              aria-label="Play"
+              title="Play / Pause (Space or K)"
+              disabled
+            >
+              <svg class="i-play" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="6 4 20 12 6 20 6 4"></polygon>
               </svg>
-              <svg class="i-pause" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
+              <svg class="i-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                <rect x="14" y="4" width="4" height="16" rx="1"></rect>
               </svg>
             </button>
 
-            <button id="next" type="button" class="btn" aria-label="Next Track" title="Next (N or Right Arrow)">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M16 6h2v12h-2zm-2 6L5.5 6v12z" />
+            <button
+              type="button"
+              class="btn"
+              id="next"
+              aria-label="Next Track"
+              title="Next Track (N or L)"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
               </svg>
             </button>
           </div>
         </section>
+
+        <!-- Slide-up Playlist Drawer with Live Search & Auto-Sync -->
+        <aside class="list" id="list" aria-label="Timeline Playlist" aria-hidden="true">
+          <div class="list__header">
+            <div class="list__title">
+              <span>Timeline Playlist</span>
+              <div class="list__header-actions">
+                <button
+                  type="button"
+                  class="list__sync-btn"
+                  id="syncBtn"
+                  title="Sync with YouTube Playlist"
+                  aria-label="Sync with YouTube Playlist"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                  </svg>
+                </button>
+                <span class="list__badge" id="trackCountBadge">3 tracks</span>
+              </div>
+            </div>
+            <input
+              type="search"
+              class="list__search"
+              id="searchInput"
+              placeholder="Search tracks, artists, bangers…"
+              aria-label="Filter playlist tracks"
+            />
+          </div>
+
+          <ol id="listItems"></ol>
+
+          <div class="list__footer">
+            <span>✨ Auto-syncs with YouTube playlist</span>
+          </div>
+        </aside>
       </div>
+
+      <!-- Keyboard Shortcuts Modal -->
+      <dialog class="modal" id="shortcutsModal" aria-labelledby="shortcutsHeading">
+        <div class="modal__card">
+          <div class="modal__header">
+            <h3 id="shortcutsHeading">⚡ Keyboard Shortcuts</h3>
+            <button type="button" class="modal__close" id="closeModalBtn" aria-label="Close dialog">✕</button>
+          </div>
+          <div class="modal__grid">
+            <div class="shortcut-item">
+              <span>Play / Pause</span>
+              <span><kbd>Space</kbd> or <kbd>K</kbd></span>
+            </div>
+            <div class="shortcut-item">
+              <span>Next Track</span>
+              <span><kbd>N</kbd> or <kbd>L</kbd></span>
+            </div>
+            <div class="shortcut-item">
+              <span>Previous Track</span>
+              <span><kbd>P</kbd> or <kbd>J</kbd></span>
+            </div>
+            <div class="shortcut-item">
+              <span>Shuffle On / Off</span>
+              <span><kbd>S</kbd></span>
+            </div>
+            <div class="shortcut-item">
+              <span>Mute / Unmute</span>
+              <span><kbd>M</kbd></span>
+            </div>
+            <div class="shortcut-item">
+              <span>Shortcuts Help</span>
+              <span><kbd>?</kbd></span>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </main>
 
-    <!-- Shortcuts Dialog Modal -->
-    <dialog class="modal" id="shortcutsModal">
-      <div class="modal__card">
-        <div class="modal__header">
-          <h3>⚡ Keyboard Shortcuts</h3>
-          <button id="closeModalBtn" class="modal__close" aria-label="Close">✕</button>
-        </div>
-        <div class="modal__grid">
-          <div class="shortcut-item"><kbd>Space</kbd> or <kbd>K</kbd> <span>Play / Pause</span></div>
-          <div class="shortcut-item"><kbd>N</kbd> or <kbd>→</kbd> <span>Next Track</span></div>
-          <div class="shortcut-item"><kbd>P</kbd> or <kbd>←</kbd> <span>Previous Track</span></div>
-          <div class="shortcut-item"><kbd>J</kbd> / <kbd>L</kbd> <span>Seek -5s / +5s</span></div>
-          <div class="shortcut-item"><kbd>M</kbd> <span>Mute / Unmute</span></div>
-          <div class="shortcut-item"><kbd>S</kbd> <span>Toggle Shuffle</span></div>
-        </div>
-      </div>
-    </dialog>
-
-    <!-- Below the fold details for SEO & context -->
-    <section id="about" class="content">
+    <!-- SEO & Contextual Section (Below the fold) -->
+    <section class="content">
       <h2>About EditorsAdda</h2>
       <p>
         <strong>EditorsAdda</strong> is an ambient streaming audio companion engineered specifically for video editors, motion graphic artists, colorists, and late-night creators.
@@ -294,6 +385,7 @@
       </p>
     </section>
 
+    <!-- Embedded Scripts for 100% Reliable Loading -->
     <script src="app.js"></script>
   </body>
 </html>
