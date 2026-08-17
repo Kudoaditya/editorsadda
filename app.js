@@ -235,21 +235,32 @@ function renderPlaying(on) {
 
 /* ── Playback Navigation ─────────────────────────────────────── */
 function go(newPos) {
+  userInteracted = true;
+  state.started = true;
   const n = state.order.length;
   if (!n) return;
   state.pos = ((newPos % n) + n) % n;
   renderTrack();
-  if (!yt) return;
-  state.started = true;
-  yt.loadVideoById(currentTrack().id);
+
+  if (yt && state.ready && typeof yt.loadVideoById === 'function') {
+    yt.loadVideoById(currentTrack().id);
+    yt.playVideo();
+  }
 }
 
 function toggle() {
-  if (!yt || !state.ready) return;
+  userInteracted = true;
+  state.started = true;
+
+  if (!yt || !state.ready) {
+    renderPlaying(true);
+    initYouTubePlayer();
+    return;
+  }
+
   if (state.playing) {
     yt.pauseVideo();
   } else {
-    state.started = true;
     yt.playVideo();
   }
 }
@@ -260,11 +271,13 @@ let userInteracted = false;
 function maybeAutoStart() {
   if (userInteracted && yt && state.ready && !state.started) {
     state.started = true;
-    yt.playVideo();
+    try {
+      yt.playVideo();
+    } catch {}
   }
 }
 
-['pointerdown', 'keydown'].forEach((evt) =>
+['pointerdown', 'keydown', 'click'].forEach((evt) =>
   document.addEventListener(
     evt,
     () => {
@@ -707,10 +720,14 @@ function preferAudio() {
   } catch {}
 }
 
-window.onYouTubeIframeAPIReady = () => {
+let isBootingYT = false;
+function initYouTubePlayer() {
+  if (yt || isBootingYT || !window.YT || !window.YT.Player) return;
+  isBootingYT = true;
+
   yt = new YT.Player('yt-player', {
-    height: '1',
-    width: '1',
+    height: '240',
+    width: '320',
     videoId: currentTrack().id,
     playerVars: {
       origin: window.location.origin,
@@ -725,13 +742,16 @@ window.onYouTubeIframeAPIReady = () => {
     events: {
       onReady: () => {
         state.ready = true;
+        isBootingYT = false;
         if (el.play) el.play.disabled = false;
         try {
           yt.setVolume(state.volume);
           if (state.muted) yt.mute();
         } catch {}
         preferAudio();
-        maybeAutoStart();
+        if (state.started || userInteracted) {
+          try { yt.playVideo(); } catch {}
+        }
       },
       onStateChange: (e) => {
         const S = YT.PlayerState;
@@ -747,14 +767,19 @@ window.onYouTubeIframeAPIReady = () => {
       onError: (err) => {
         console.warn('YouTube Player notice:', err);
         showToast('⏭️', 'Skipping to next track…', 2000);
-        setTimeout(() => go(state.pos + 1), 500);
+        setTimeout(() => go(state.pos + 1), 600);
       },
     },
   });
 
   setInterval(samplePlayer, 250);
   requestAnimationFrame(paintProgress);
-};
+}
+
+window.onYouTubeIframeAPIReady = initYouTubePlayer;
+if (window.YT && window.YT.Player) {
+  initYouTubePlayer();
+}
 
 /* ── Interactive 3D Mouse Parallax & Dynamic Equalizer ───────── */
 const bgImg = $('bgImg');
@@ -812,5 +837,8 @@ requestAnimationFrame(animateSpectrum);
 
   const s = document.createElement('script');
   s.src = 'https://www.youtube.com/iframe_api';
+  s.onload = () => {
+    if (window.YT && window.YT.Player) initYouTubePlayer();
+  };
   document.head.append(s);
 })();
