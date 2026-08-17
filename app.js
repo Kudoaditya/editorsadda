@@ -713,11 +713,14 @@ window.onYouTubeIframeAPIReady = () => {
     width: '1',
     videoId: currentTrack().id,
     playerVars: {
+      origin: window.location.origin,
+      enablejsapi: 1,
       playsinline: 1,
       controls: 0,
       disablekb: 1,
       modestbranding: 1,
       rel: 0,
+      autoplay: 0,
     },
     events: {
       onReady: () => {
@@ -741,8 +744,10 @@ window.onYouTubeIframeAPIReady = () => {
           go(state.pos + 1);
         }
       },
-      onError: () => {
-        if (state.started) go(state.pos + 1);
+      onError: (err) => {
+        console.warn('YouTube Player notice:', err);
+        showToast('⏭️', 'Skipping to next track…', 2000);
+        setTimeout(() => go(state.pos + 1), 500);
       },
     },
   });
