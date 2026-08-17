@@ -309,8 +309,17 @@ async function syncPlaylist(showIndicator = true) {
   if (showIndicator && el.syncBtn) el.syncBtn.classList.add('is-syncing');
 
   try {
-    const res = await fetch('/api/tracks');
-    if (!res.ok) throw new Error('API error');
+    let res = null;
+    try {
+      const apiRes = await fetch('/api/tracks');
+      if (apiRes.ok) res = apiRes;
+    } catch {}
+
+    if (!res || !res.ok) {
+      res = await fetch('tracks.json?v=' + Date.now());
+    }
+
+    if (!res.ok) throw new Error('API or static error');
     const newTracks = await res.json();
 
     if (Array.isArray(newTracks) && newTracks.length > 0) {
@@ -551,9 +560,20 @@ window.onYouTubeIframeAPIReady = () => {
 /* ── Initialization ─────────────────────────────────────────── */
 (async function init() {
   try {
-    const res = await fetch('/api/tracks').catch(() => fetch('tracks.json'));
+    let res = null;
+    try {
+      const apiRes = await fetch('/api/tracks');
+      if (apiRes && apiRes.ok) res = apiRes;
+    } catch {}
+
+    if (!res || !res.ok) {
+      res = await fetch('tracks.json?v=' + Date.now());
+    }
+
+    if (!res.ok) throw new Error('Failed to fetch tracks: ' + res.status);
     state.tracks = await res.json();
-  } catch {
+  } catch (err) {
+    console.error('Track loading error:', err);
     el.title.textContent = 'Could not load tracks';
     return;
   }
